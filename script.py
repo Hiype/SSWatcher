@@ -9,7 +9,7 @@ import os
 class SSComMonitor:
     def __init__(self):
         self.url = "https://www.ss.com/lv/transport/cars/audi/a7/fDgSeF4belM=.html"
-        self.onesignal_app_id = os.getenv('ONESIGNAL_REST_API_KEY')
+        self.onesignal_app_id = os.getenv('ONESIGNAL_REST_API_KEY') # From .env file
         self.onesignal_rest_api_key = os.getenv('ONESIGNAL_REST_API_KEY')
         self.storage_file = 'known_ads.json'
         self.known_ads = self.load_known_ads()
@@ -53,11 +53,9 @@ class SSComMonitor:
                         ad_response = requests.get(url)
                         ad_soup = BeautifulSoup(ad_response.content, 'html.parser')
 
-                        # Find first link containing image with class "isfoto"
                         full_img_link = ad_soup.select_one('a:has(img.isfoto)')
                         img_url = full_img_link['href'] if full_img_link else ''
 
-                        # Convert relative URL to absolute if needed
                         if img_url and not img_url.startswith('http'):
                             img_url = f"https://www.ss.com{img_url}"
 
@@ -121,7 +119,7 @@ class SSComMonitor:
                     self.known_ads.add(ad['id'])
                     self.save_known_ads()
 
-            time.sleep(300)
+            time.sleep(100)
 
 
 if __name__ == '__main__':
