@@ -1,15 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 import time
 import json
 import hashlib
 import os
 
 
+
 class SSComMonitor:
     def __init__(self):
         self.url = "https://www.ss.com/lv/transport/cars/audi/a7/fDgSeF4belM=.html"
-        self.onesignal_app_id = os.getenv('ONESIGNAL_REST_API_KEY') # From .env file
+        self.onesignal_app_id = os.getenv('ONESIGNAL_APP_ID') # From .env file
         self.onesignal_rest_api_key = os.getenv('ONESIGNAL_REST_API_KEY')
         self.storage_file = 'known_ads.json'
         self.known_ads = self.load_known_ads()
@@ -77,6 +79,9 @@ class SSComMonitor:
             'Authorization': f'Key {self.onesignal_rest_api_key}'
         }
 
+        # Groups prevent previous notification overwrite by the new one
+        group_id = str(int(time.time_ns()))
+
         payload = {
             'app_id': self.onesignal_app_id,
             'included_segments': ['All'],
@@ -88,7 +93,13 @@ class SSComMonitor:
             'chrome_web_icon': 'https://hiype.id.lv/imgs/sslogo.png',
             'android_small_icon': 'https://hiype.id.lv/imgs/sslogo.png',
             'android_large_icon': 'https://hiype.id.lv/imgs/sslogo.png',
-            'url': url
+            'url': url,
+            'group': group_id,
+            'collapse_id': group_id,
+            'android_group': group_id,
+            'web_push_topic': group_id,
+            'ios_badgeType': 'Increase',  # For iOS badge count
+            'ios_badgeCount': 1  # Increment badge count
         }
 
         try:
@@ -123,5 +134,6 @@ class SSComMonitor:
 
 
 if __name__ == '__main__':
+    load_dotenv()
     monitor = SSComMonitor()
     monitor.monitor()
