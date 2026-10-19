@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SS.com Apartment Alerts</title>
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "e0e33083-be30-42cd-be25-941100824495",
+            });
+        });
+    </script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 24px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #e63946, #c1121f);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(230, 57, 70, 0.45);
+        }
+
+        .features {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 36px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.75);
+            flex: 1 1 120px;
+        }
+
+        .feature span {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.35);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo" style="font-size:3rem;line-height:72px;">🏠</div>
+
+        <h1>SS.com Apartment Alerts</h1>
+        <p>Get instant push notifications the moment a new apartment listing appears on SS.com — before anyone else sees it.</p>
+
+        <button class="btn" onclick="subscribeToNotifications()">🔔 Enable Notifications</button>
+
+        <div class="features">
+            <div class="feature"><span>⚡</span>Real-time</div>
+            <div class="feature"><span>🆓</span>Free</div>
+            <div class="feature"><span>📱</span>All devices</div>
+        </div>
+
+        <footer>Powered by SS.com Watcher &amp; OneSignal</footer>
+    </div>
+
+    <script>
+        async function subscribeToNotifications() {
+            window.OneSignalDeferred = window.OneSignalDeferred || [];
+            OneSignalDeferred.push(async function(OneSignal) {
+                await OneSignal.Notifications.requestPermission();
+            });
+        }
+    </script>
+</body>
+</html>
+

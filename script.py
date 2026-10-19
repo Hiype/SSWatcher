@@ -10,7 +10,13 @@ import os
 
 class SSComMonitor:
     def __init__(self):
-        self.url = "https://www.ss.com/lv/transport/cars/audi/a7/fDgSeF4belM=.html"
+        self.urls = [
+            "https://www.ss.com/lv/real-estate/flats/riga/hand_over/filter/",
+            "https://www.ss.com/lv/real-estate/flats/riga-region/hand_over/filter/",
+            # Add more region URLs here, e.g.:
+            # "https://www.ss.com/lv/real-estate/flats/jurmala/all/",
+            # "https://www.ss.com/lv/real-estate/flats/ogre-and-reg/all/",
+        ]
         self.onesignal_app_id = os.getenv('ONESIGNAL_APP_ID') # From .env file
         self.onesignal_rest_api_key = os.getenv('ONESIGNAL_REST_API_KEY')
         self.storage_file = 'known_ads.json'
@@ -27,9 +33,10 @@ class SSComMonitor:
         with open(self.storage_file, 'w') as f:
             json.dump(list(self.known_ads), f)
 
-    def get_page_content(self):
+    def get_page_content(self, url):
         try:
-            response = requests.get(self.url)
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36'}
+            response = requests.get(url, headers=headers)
             return BeautifulSoup(response.content, 'html.parser')
         except Exception as e:
             print(f"Error fetching page: {e}")
@@ -52,7 +59,7 @@ class SSComMonitor:
                     ad_id = hashlib.md5(title.encode()).hexdigest()
 
                     try:
-                        ad_response = requests.get(url)
+                        ad_response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36'})
                         ad_soup = BeautifulSoup(ad_response.content, 'html.parser')
 
                         full_img_link = ad_soup.select_one('a:has(img.isfoto)')
@@ -86,7 +93,7 @@ class SSComMonitor:
             'app_id': self.onesignal_app_id,
             'included_segments': ['All'],
             'contents': {'en': title},
-            'headings': {'en': 'New Audi A7 listing!'},
+            'headings': {'en': 'New apartment listing!'},
             'big_picture': image_url,
             'chrome_web_image': image_url,
             'ios_attachments': {'id': image_url},
@@ -120,15 +127,16 @@ class SSComMonitor:
         while True:
             print("Checking for new ads...")
 
-            soup = self.get_page_content()
-            current_ads = self.parse_ads(soup)
+            for url in self.urls:
+                soup = self.get_page_content(url)
+                current_ads = self.parse_ads(soup)
 
-            for ad in current_ads:
-                if ad['id'] not in self.known_ads:
-                    print(f"New ad found: {ad['title']}")
-                    self.send_notification(ad['title'], ad['img_url'], ad['url'])
-                    self.known_ads.add(ad['id'])
-                    self.save_known_ads()
+                for ad in current_ads:
+                    if ad['id'] not in self.known_ads:
+                        print(f"New ad found: {ad['title']}")
+                        self.send_notification(ad['title'], ad['img_url'], ad['url'])
+                        self.known_ads.add(ad['id'])
+                        self.save_known_ads()
 
             time.sleep(100)
 

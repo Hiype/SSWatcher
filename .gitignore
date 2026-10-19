@@ -1,2 +1,4 @@
 .venv
 known_ads.json
+.env
+

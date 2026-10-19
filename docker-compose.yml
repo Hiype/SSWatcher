@@ -1,0 +1,20 @@
+services:
+
+  # ── Python monitor: scrapes SS.com and sends push notifications ─────────────
+  # (Web serving is handled by the combined-nginx-proxy)
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sswatcher-monitor
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # Persist known_ads.json across restarts so we don't spam on redeploy
+      - known_ads_data:/app
+volumes:
+  known_ads_data:
+
+
+
